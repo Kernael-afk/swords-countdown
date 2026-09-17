@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWORDS Countdown</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #050505;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+
+    .guild {
+      font-size: 1rem;
+      letter-spacing: 12px;
+      color: #777;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 5rem);
+      margin: 0 0 15px;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+    }
+
+    .subtitle {
+      color: #888;
+      letter-spacing: 5px;
+      margin-bottom: 50px;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 35px;
+      margin-bottom: 50px;
+    }
+
+    .time {
+      min-width: 120px;
+    }
+
+    .number {
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: bold;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .label {
+      font-size: 0.75rem;
+      color: #666;
+      letter-spacing: 4px;
+      margin-top: 10px;
+    }
+
+    .music {
+      margin-top: 30px;
+      color: #999;
+    }
+
+    .music strong {
+      display: block;
+      color: #fff;
+      font-size: 1.3rem;
+      margin-bottom: 5px;
+    }
+
+    iframe {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 560px;
+      height: 315px;
+      border: 0;
+    }
+
+    .finished {
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: bold;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .countdown {
+        gap: 12px;
+      }
+
+      .time {
+        min-width: 85px;
+      }
+
+      .guild {
+        letter-spacing: 7px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="guild">
+      SWORDS
+    </div>
+
+    <h1>Until 11 PM</h1>
+
+    <div class="subtitle">
+      PHILIPPINE TIME
+    </div>
+
+    <div id="countdown" class="countdown">
+
+      <div class="time">
+        <div id="hours" class="number">00</div>
+        <div class="label">HOURS</div>
+      </div>
+
+      <div class="time">
+        <div id="minutes" class="number">00</div>
+        <div class="label">MINUTES</div>
+      </div>
+
+      <div class="time">
+        <div id="seconds" class="number">00</div>
+        <div class="label">SECONDS</div>
+      </div>
+
+    </div>
+
+    <div id="finished" class="finished">
+      IT'S TIME
+    </div>
+
+    <div class="music">
+      <strong>Anxiety</strong>
+      Doechii
+    </div>
+
+    <!--
+      Replace VIDEO_ID with the YouTube video ID
+      for the official Anxiety video/audio.
+    -->
+
+    <iframe
+      src="https://www.youtube.com/embed/VIDEO_ID"
+      title="Doechii Anxiety"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+
+  </div>
+
+  <script>
+    function getTarget() {
+      const now = new Date();
+
+      const manilaParts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Manila",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+      }).formatToParts(now);
+
+      const parts = {};
+
+      for (const part of manilaParts) {
+        parts[part.type] = part.value;
+      }
+
+      const year = Number(parts.year);
+      const month = Number(parts.month);
+      const day = Number(parts.day);
+      const hour = Number(parts.hour);
+
+      let targetDay = day;
+
+      if (hour >= 23) {
+        targetDay++;
+      }
+
+      return Date.UTC(
+        year,
+        month - 1,
+        targetDay,
+        15,
+        0,
+        0
+      );
+    }
+
+    const target = getTarget();
+
+    function updateCountdown() {
+      const now = Date.now();
+      const distance = target - now;
+
+      if (distance <= 0) {
+        document.getElementById("countdown").style.display = "none";
+        document.getElementById("finished").style.display = "block";
+        return;
+      }
+
+      const hours = Math.floor(distance / (1000 * 60 * 60));
+      const minutes = Math.floor(
+        (distance % (1000 * 60 * 60)) / (1000 * 60)
+      );
+      const seconds = Math.floor(
+        (distance % (1000 * 60)) / 1000
+      );
+
+      document.getElementById("hours").textContent =
+        String(hours).padStart(2, "0");
+
+      document.getElementById("minutes").textContent =
+        String(minutes).padStart(2, "0");
+
+      document.getElementById("seconds").textContent =
+        String(seconds).padStart(2, "0");
+    }
+
+    updateCountdown();
+
+    setInterval(updateCountdown, 1000);
+  </script>
+
+</body>
+</html>
+
+
